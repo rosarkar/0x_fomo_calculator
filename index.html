@@ -35,19 +35,6 @@
     .calculator-inner { max-width: 80rem; margin: 0 auto; }
     
     .header { margin-bottom: 1rem; text-align: center; }
-    .header-badge { 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 0.5rem; 
-      background: #ffffff; 
-      border: 1px solid #d4d4d8; 
-      border-radius: 9999px; 
-      padding: 0.375rem 1rem; 
-      margin-bottom: 0.5rem; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .header-badge svg { width: 16px; height: 16px; color: #71717a; }
-    .header-badge span { color: #52525b; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
     .header h1 { font-size: 1.25rem; font-weight: 700; color: #09090b; margin-bottom: 0.25rem; }
     
     .card { background: #fff; border: 1px solid #e4e4e7; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -116,25 +103,6 @@
     .comp-marker .day-label { font-size: 7px; color: #71717a; font-weight: 500; }
     
     .drag-hint { font-size: 0.625rem; color: #a1a1aa; text-align: center; margin-top: 0.25rem; font-style: italic; }
-    
-    .alert { margin-top: 0.5rem; padding: 0.5rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.5rem; display: none; }
-    .alert.show { display: block; }
-    .alert p { font-size: 0.75rem; color: #92400e; }
-    .alert strong { font-weight: 600; }
-    
-    .info-box { padding: 0.625rem; background: #fff; border: 1px solid #e4e4e7; border-radius: 0.5rem; position: relative; }
-    .info-box-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
-    .info-box p { font-size: 0.75rem; color: #71717a; }
-    .info-box strong { color: #3f3f46; font-weight: 500; }
-    .info-btn { color: #a1a1aa; cursor: pointer; background: none; border: none; padding: 0; }
-    .info-btn:hover { color: #52525b; }
-    .info-btn svg { width: 14px; height: 14px; }
-    
-    .tooltip { position: absolute; bottom: 100%; left: 0; right: 0; margin-bottom: 0.5rem; padding: 0.75rem; background: #18181b; border: 1px solid #3f3f46; border-radius: 0.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); z-index: 10; display: none; }
-    .tooltip.show { display: block; }
-    .tooltip p { font-size: 0.75rem; color: #f4f4f5; line-height: 1.625; }
-    .tooltip .highlight { color: #34d399; font-weight: 600; }
-    .tooltip-arrow { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-top-color: #18181b; }
     
     .copy-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; border: 2px solid #d4d4d8; background: #fff; color: #3f3f46; cursor: pointer; transition: all 0.2s; }
     .copy-btn:hover { border-color: #a1a1aa; }
@@ -241,10 +209,6 @@
   <div class="calculator-container">
     <div class="calculator-inner">
       <div class="header">
-        <div class="header-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-          <span>0x Enterprise Insights</span>
-        </div>
         <h1>The Cost of Inaction</h1>
       </div>
 
@@ -292,7 +256,6 @@
               <input type="range" id="lagSlider" class="slider-amber" min="1" max="90" value="30">
               <div class="comp-markers" id="compMarkers"></div>
               <p class="drag-hint">↔ Drag competitors to adjust their listing speed</p>
-              <div class="alert" id="compAlert"><p></p></div>
             </div>
 
             <div class="control-section">
@@ -315,18 +278,6 @@
                 <span class="value value-violet" id="captureValue">15%</span>
               </div>
               <input type="range" id="captureSlider" class="slider-violet" min="1" max="100" value="15">
-              <div class="info-box" style="margin-top: 0.5rem;">
-                <div class="info-box-row">
-                  <p><strong>Context:</strong> Top memecoins see 40-60% volume on-chain pre-listing</p>
-                  <button class="info-btn" id="infoBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                  </button>
-                </div>
-                <div class="tooltip" id="tooltip">
-                  <p><span class="highlight">Context:</span> Top memecoins often see 40-60% of total volume occur on-chain before major CEX listings. The 15% capture rate is a conservative baseline. Adjust higher for aggressive market capture scenarios.</p>
-                  <div class="tooltip-arrow"></div>
-                </div>
-              </div>
             </div>
 
             <button class="copy-btn" id="copyBtn">
@@ -390,7 +341,7 @@
             <h4>Capture Day 1 volume without the listing process.</h4>
             <p>0x gives your users instant access to 9M+ tokens. No committee. No delays.</p>
           </div>
-          <a href="https://0x.org/docs" target="_blank" rel="noopener noreferrer" class="cta-btn">
+          <a href="https://0x.org/contact" target="_blank" rel="noopener noreferrer" class="cta-btn">
             Talk to Enterprise Team
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
           </a>
@@ -472,18 +423,6 @@
       document.getElementById('perDay').textContent = formatCurrency(lostRevenue / state.listingLag, true);
       document.getElementById('volumeMissed').textContent = formatCurrency(totalMissedVolume, true);
       document.getElementById('with0x').textContent = `+${formatCurrency(lostRevenue, true)}`;
-      
-      // Competitor alert
-      const beaten = competitors.filter(c => c.day < state.listingLag);
-      const alert = document.getElementById('compAlert');
-      if (beaten.length > 0) {
-        // Sort by day to get earliest competitor
-        const earliest = [...beaten].sort((a, b) => a.day - b.day)[0];
-        alert.classList.add('show');
-        alert.querySelector('p').innerHTML = `<strong>${earliest.name}</strong> listed Day ${earliest.day}. They captured ${state.listingLag - earliest.day} days of volume before you.`;
-      } else {
-        alert.classList.remove('show');
-      }
       
       // Competitor markers
       updateCompMarkers();
@@ -756,7 +695,7 @@ Evaluate integration of hybrid trading infrastructure (e.g., 0x RFQ + AMM aggreg
 
 NEXT STEPS
 ----------
-Contact 0x Enterprise Team: enterprise@0x.org
+Contact 0x Enterprise Team: https://0x.org/contact
 Documentation: https://0x.org/docs
 
 ============================================
@@ -812,10 +751,6 @@ Generated by 0x Cost of Inaction Calculator`;
     document.getElementById('captureSlider').addEventListener('input', e => {
       state.captureRate = parseInt(e.target.value);
       updateUI();
-    });
-
-    document.getElementById('infoBtn').addEventListener('click', () => {
-      document.getElementById('tooltip').classList.toggle('show');
     });
 
     document.getElementById('copyBtn').addEventListener('click', () => {
