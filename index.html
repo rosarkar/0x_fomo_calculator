@@ -49,7 +49,6 @@
     .header-badge svg { width: 16px; height: 16px; color: #71717a; }
     .header-badge span { color: #52525b; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
     .header h1 { font-size: 1.25rem; font-weight: 700; color: #09090b; margin-bottom: 0.25rem; }
-    .header p { color: #52525b; font-size: 0.875rem; max-width: 42rem; margin: 0 auto; }
     
     .card { background: #fff; border: 1px solid #e4e4e7; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .card-layout { display: flex; flex-direction: column; }
@@ -145,11 +144,27 @@
     .viz-panel { display: flex; flex-direction: column; background: #fff; }
     
     .result-section { padding: 1rem; background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%); border-bottom: 1px solid #fee2e2; }
+    .result-top { display: flex; flex-direction: column; gap: 1rem; }
+    .result-main { flex-shrink: 0; }
     .result-label { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
     .result-label svg { width: 24px; height: 24px; color: #dc2626; }
     .result-label span { font-size: 0.75rem; color: #52525b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
     .result-value { font-family: ui-monospace, monospace; font-size: 3rem; font-weight: 700; color: #dc2626; letter-spacing: -0.05em; line-height: 1; }
     .result-subtitle { font-size: 0.875rem; color: #71717a; margin-top: 0.5rem; }
+    
+    .result-context { 
+      flex: 1;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.7);
+      border-radius: 0.5rem;
+      border: 1px solid rgba(220, 38, 38, 0.15);
+    }
+    .result-context p { 
+      font-size: 0.8125rem; 
+      color: #52525b; 
+      line-height: 1.6;
+    }
+    .result-context strong { color: #dc2626; font-weight: 600; }
     
     .stats { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
     .stat { padding: 0.5rem 1rem; border-radius: 0.5rem; text-align: center; background: #fff; border: 1px solid #e4e4e7; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -169,25 +184,25 @@
     .chart-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
     .chart-container { height: 200px; position: relative; }
     
-    .chart-watermark {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      opacity: 0.25;
-      pointer-events: none;
-      z-index: 5;
+    .chart-footer { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-top: 0.5rem; 
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
-    .chart-watermark svg { width: 16px; height: 16px; }
-    .chart-watermark span { font-size: 0.625rem; font-weight: 600; color: #18181b; letter-spacing: 0.05em; }
-    
-    .comp-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 0.5rem; font-size: 0.75rem; }
+    .comp-legend { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.75rem; }
     .comp-legend-item { display: flex; align-items: center; gap: 0.25rem; color: #52525b; }
     .comp-legend-item.faded { opacity: 0.4; }
     .comp-legend-line { width: 12px; height: 2px; }
     .comp-legend-x { color: #ef4444; font-weight: 700; margin-left: 2px; }
+    
+    .chart-watermark {
+      font-size: 0.6875rem;
+      color: #a1a1aa;
+      font-weight: 500;
+    }
     
     .cta-section { padding: 1rem; background: #fafafa; border-top: 1px solid #e4e4e7; display: flex; flex-direction: column; gap: 0.75rem; align-items: center; text-align: center; }
     .cta-text h4 { font-size: 0.875rem; font-weight: 600; color: #18181b; margin-bottom: 0.125rem; }
@@ -211,8 +226,10 @@
       .control-panel { width: 35%; border-bottom: none; border-right: 1px solid #e4e4e7; padding: 1.25rem; }
       .viz-panel { width: 65%; }
       .result-section { padding: 1.25rem; text-align: left; }
+      .result-top { flex-direction: row; align-items: flex-start; }
       .result-value { font-size: 4.5rem; }
       .result-label { justify-content: flex-start; }
+      .result-context { margin-top: 0; }
       .stats { justify-content: flex-start; }
       .chart-section { padding: 1.25rem; }
       .chart-container { height: 220px; }
@@ -229,7 +246,6 @@
           <span>0x Enterprise Insights</span>
         </div>
         <h1>The Cost of Inaction</h1>
-        <p>Every day you wait to list a trending token, your competitors are capturing your users' volume.</p>
       </div>
 
       <div class="card">
@@ -321,12 +337,19 @@
 
           <div class="viz-panel">
             <div class="result-section">
-              <div class="result-label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
-                <span>Revenue Lost on $<span id="tokenDisplay">PNUT</span></span>
+              <div class="result-top">
+                <div class="result-main">
+                  <div class="result-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+                    <span>Revenue Lost on $<span id="tokenDisplay">PNUT</span></span>
+                  </div>
+                  <div class="result-value" id="lostRevenue">$225,000</div>
+                  <p class="result-subtitle" id="subtitle">from $900.0M missed volume over 30 days</p>
+                </div>
+                <div class="result-context">
+                  <p id="contextText">Every day you delay listing a trending token, competitors capture volume that would otherwise flow through your platform. This calculator models the <strong>fee revenue you forfeit</strong> during your listing lag window. The opportunity cost compounds as early momentum drives the majority of trading activity, often within the first 7-14 days of a token's lifecycle.</p>
+                </div>
               </div>
-              <div class="result-value" id="lostRevenue">$225,000</div>
-              <p class="result-subtitle" id="subtitle">from $900.0M missed volume over 30 days</p>
               <div class="stats">
                 <div class="stat">
                   <div class="stat-label">Per Day</div>
@@ -353,12 +376,11 @@
               </div>
               <div class="chart-container">
                 <canvas id="chart"></canvas>
-                <div class="chart-watermark">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.41 16.09V14.5H8.5l4-8v3.59h2.09l-4 8z"/></svg>
-                  <span>Powered by 0x</span>
-                </div>
               </div>
-              <div class="comp-legend" id="compLegend"></div>
+              <div class="chart-footer">
+                <div class="comp-legend" id="compLegend"></div>
+                <span class="chart-watermark">Powered by 0x</span>
+              </div>
             </div>
           </div>
         </div>
@@ -455,8 +477,10 @@
       const beaten = competitors.filter(c => c.day < state.listingLag);
       const alert = document.getElementById('compAlert');
       if (beaten.length > 0) {
+        // Sort by day to get earliest competitor
+        const earliest = [...beaten].sort((a, b) => a.day - b.day)[0];
         alert.classList.add('show');
-        alert.querySelector('p').innerHTML = `<strong>${beaten[0].name}</strong> listed Day ${beaten[0].day}. They captured ${state.listingLag - beaten[0].day} days of volume before you.`;
+        alert.querySelector('p').innerHTML = `<strong>${earliest.name}</strong> listed Day ${earliest.day}. They captured ${state.listingLag - earliest.day} days of volume before you.`;
       } else {
         alert.classList.remove('show');
       }
@@ -487,7 +511,9 @@
 
     function updateCompLegend() {
       const container = document.getElementById('compLegend');
-      container.innerHTML = competitors.map(c => {
+      // Sort by day for display
+      const sortedComps = [...competitors].sort((a, b) => a.day - b.day);
+      container.innerHTML = sortedComps.map(c => {
         const late = state.listingLag > c.day;
         return `<div class="comp-legend-item ${late ? '' : 'faded'}">
           <div class="comp-legend-line" style="background: ${late ? c.color : 'transparent'}; border-top: ${late ? 'none' : `1px dashed ${c.color}`};"></div>
@@ -500,7 +526,7 @@
     function updateChart() {
       const data = generateChartData();
       
-      // Build annotations for competitor lines with vertical labels
+      // Build annotations for competitor lines with vertical labels (closer to line)
       const annotations = {};
       competitors.forEach((c, i) => {
         const late = state.listingLag > c.day;
@@ -513,13 +539,13 @@
           borderDash: late ? [] : [4, 4]
         };
         
-        // Add vertical label annotation
+        // Add vertical label annotation - positioned closer to line
         annotations[`compLabel${i}`] = {
           type: 'label',
           xValue: c.day,
           yValue: 'max',
-          yAdjust: 30,
-          xAdjust: 8,
+          yAdjust: 25,
+          xAdjust: 3,
           content: [c.name],
           color: c.color,
           font: {
@@ -544,13 +570,13 @@
         borderDash: [6, 3]
       };
       
-      // User's vertical label
+      // User's vertical label - closer to line
       annotations.userLabel = {
         type: 'label',
         xValue: state.listingLag,
         yValue: 'max',
-        yAdjust: 30,
-        xAdjust: 8,
+        yAdjust: 25,
+        xAdjust: 3,
         content: [`You: D${state.listingLag}`],
         color: '#dc2626',
         font: {
@@ -635,7 +661,7 @@
       }
     }
 
-    // Drag handlers
+    // Drag handlers - independent movement (no sorting)
     function startDrag(e) {
       e.preventDefault();
       const marker = e.currentTarget;
@@ -651,7 +677,8 @@
         startX: clientX,
         startDay: competitors[idx].day,
         containerLeft: rect.left,
-        containerWidth: rect.width
+        containerWidth: rect.width,
+        competitorName: competitors[idx].name
       };
       
       marker.classList.add('dragging');
@@ -671,13 +698,8 @@
       const percentage = Math.max(0, Math.min(1, relativeX / dragState.containerWidth));
       const newDay = Math.max(1, Math.min(90, Math.round(percentage * 90)));
       
+      // Update only the dragged competitor - don't sort or affect others
       competitors[dragState.index].day = newDay;
-      
-      // Sort competitors by day to maintain visual order
-      competitors.sort((a, b) => a.day - b.day);
-      
-      // Find new index after sort
-      const newIndex = competitors.findIndex(c => c.name === competitors.find((_, i) => i === dragState.index)?.name);
       
       updateUI();
     }
@@ -698,8 +720,9 @@
     function generateReport() {
       const { lostRevenue, totalMissedVolume } = calculate();
       const beaten = competitors.filter(c => c.day < state.listingLag);
-      const compLines = beaten.length > 0
-        ? beaten.map(c => `  - ${c.name}: Listed Day ${c.day} (${state.listingLag - c.day} days ahead)`).join('\n')
+      const sortedBeaten = [...beaten].sort((a, b) => a.day - b.day);
+      const compLines = sortedBeaten.length > 0
+        ? sortedBeaten.map(c => `  - ${c.name}: Listed Day ${c.day} (${state.listingLag - c.day} days ahead)`).join('\n')
         : '  - None. You beat all major competitors to market.';
       
       return `INTERNAL MEMO: OPPORTUNITY COST ANALYSIS
