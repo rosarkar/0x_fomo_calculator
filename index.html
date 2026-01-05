@@ -278,7 +278,7 @@
                 </span>
                 <span class="value value-amber" id="lagValue">18 days</span>
               </div>
-              <input type="range" id="lagSlider" class="slider-amber" min="1" max="500" value="18">
+              <input type="range" id="lagSlider" class="slider-amber" min="1" max="600" value="18">
               <div class="comp-markers" id="compMarkers"></div>
               <p class="drag-hint">↔ Drag competitors to adjust their listing speed</p>
             </div>
@@ -382,7 +382,59 @@
 
   <script>
     // Constants
-    const SLIDER_MAX = 500;
+    const SLIDER_MAX = 600;
+    
+    // Token-specific data with actual listing dates
+    const tokenData = {
+      PEPE: {
+        volume: 71,
+        lag: 18,
+        competitors: [
+          { name: 'Binance', day: 18, color: '#f59e0b' },
+          { name: 'Bybit', day: 19, color: '#8b5cf6' },
+          { name: 'Kraken', day: 565, color: '#0891b2' },
+          { name: 'Coinbase', day: 577, color: '#2563eb' }
+        ]
+      },
+      WIF: {
+        volume: 45,
+        lag: 106,
+        competitors: [
+          { name: 'Kraken', day: 90, color: '#0891b2' },
+          { name: 'Binance', day: 106, color: '#f59e0b' },
+          { name: 'Bybit', day: 161, color: '#8b5cf6' },
+          { name: 'Coinbase', day: 359, color: '#2563eb' }
+        ]
+      },
+      BONK: {
+        volume: 25,
+        lag: 355,
+        competitors: [
+          { name: 'Bybit', day: 10, color: '#8b5cf6' },
+          { name: 'Coinbase', day: 354, color: '#2563eb' },
+          { name: 'Binance', day: 355, color: '#f59e0b' }
+        ]
+      },
+      POPCAT: {
+        volume: 15,
+        lag: 428,
+        competitors: [
+          { name: 'Bybit', day: 192, color: '#8b5cf6' },
+          { name: 'Kraken', day: 282, color: '#0891b2' },
+          { name: 'Coinbase', day: 428, color: '#2563eb' }
+        ]
+      },
+      Custom: {
+        volume: 50,
+        lag: 30,
+        competitors: [
+          { name: 'Binance', day: 3, color: '#f59e0b' },
+          { name: 'Bybit', day: 7, color: '#8b5cf6' },
+          { name: 'Kraken', day: 14, color: '#0891b2' },
+          { name: 'Coinbase', day: 21, color: '#2563eb' }
+        ]
+      }
+    };
     
     // State - defaults match PEPE
     let state = {
@@ -394,12 +446,8 @@
       selectedPreset: 'PEPE'
     };
 
-    let competitors = [
-      { name: 'Binance', day: 3, color: '#f59e0b' },
-      { name: 'Bybit', day: 7, color: '#8b5cf6' },
-      { name: 'Kraken', day: 14, color: '#0891b2' },
-      { name: 'Coinbase', day: 21, color: '#2563eb' }
-    ];
+    // Deep copy competitors from token data
+    let competitors = JSON.parse(JSON.stringify(tokenData.PEPE.competitors));
 
     let chart = null;
     let dragState = { isDragging: false, index: null, startX: 0, startDay: 0 };
@@ -422,15 +470,19 @@
       return { lostRevenue, totalMissedVolume };
     }
 
+    // Get dynamic max days for chart based on competitors and listing lag
+    function getMaxChartDays() {
+      const maxCompDay = Math.max(...competitors.map(c => c.day));
+      return Math.max(90, state.listingLag + 30, maxCompDay + 30);
+    }
+
     // Dynamic chart data generation starting from Day 0
     function generateChartData() {
       const data = { labels: [], market: [], capture: [] };
-      
-      // Dynamic max days based on listing lag
-      const maxDays = Math.max(90, state.listingLag + 30);
+      const maxDays = getMaxChartDays();
       
       // Decay rate - slower for longer timeframes
-      const decay = state.listingLag > 100 ? 0.995 : 0.98;
+      const decay = maxDays > 200 ? 0.997 : (maxDays > 100 ? 0.995 : 0.98);
       
       // Start from Day 0 (Launch Day)
       for (let day = 0; day <= maxDays; day++) {
@@ -474,7 +526,6 @@
       const container = document.getElementById('compMarkers');
       container.innerHTML = competitors.map((c, idx) => {
         const opacity = state.listingLag > c.day ? 1 : 0.4;
-        // Use SLIDER_MAX for consistent positioning
         const position = Math.min((c.day / SLIDER_MAX) * 100, 100);
         return `<div class="comp-marker" data-index="${idx}" style="left: ${position}%; opacity: ${opacity};">
           <div class="dot" style="background: ${c.color};"></div>
@@ -505,12 +556,42 @@
 
     function updateChart() {
       const data = generateChartData();
-      const maxDays = Math.max(90, state.listingLag + 30);
+      const maxDays = getMaxChartDays();
       
       // Build annotations for competitor lines
       const annotations = {};
+      
+      // Day 0 launch marker
+      annotations.launchLine = {
+        type: 'line',
+        xMin: 0,
+        xMax: 0,
+        borderColor: '#10b981',
+        borderWidth: 2,
+        borderDash: []
+      };
+      
+      annotations.launchLabel = {
+        type: 'label',
+        xValue: 0,
+        yValue: 'max',
+        yAdjust: 25,
+        xAdjust: 1,
+        content: ['Launch'],
+        color: '#10b981',
+        font: {
+          size: 9,
+          weight: 'bold'
+        },
+        rotation: 270,
+        position: {
+          x: 'start',
+          y: 'start'
+        }
+      };
+      
+      // Competitor lines
       competitors.forEach((c, i) => {
-        // Only show competitors within visible chart range
         if (c.day <= maxDays) {
           const late = state.listingLag > c.day;
           annotations[`comp${i}`] = {
@@ -527,7 +608,7 @@
             xValue: c.day,
             yValue: 'max',
             yAdjust: 25,
-            xAdjust: 3,
+            xAdjust: 1,
             content: [c.name],
             color: c.color,
             font: {
@@ -559,7 +640,7 @@
           xValue: state.listingLag,
           yValue: 'max',
           yAdjust: 25,
-          xAdjust: 3,
+          xAdjust: 1,
           content: [`You: D${state.listingLag}`],
           color: '#dc2626',
           font: {
@@ -573,35 +654,6 @@
           }
         };
       }
-
-      // Day 0 launch marker
-      annotations.launchLine = {
-        type: 'line',
-        xMin: 0,
-        xMax: 0,
-        borderColor: '#10b981',
-        borderWidth: 2,
-        borderDash: []
-      };
-      
-      annotations.launchLabel = {
-        type: 'label',
-        xValue: 0,
-        yValue: 'max',
-        yAdjust: 25,
-        xAdjust: 3,
-        content: ['Launch'],
-        color: '#10b981',
-        font: {
-          size: 9,
-          weight: 'bold'
-        },
-        rotation: 270,
-        position: {
-          x: 'start',
-          y: 'start'
-        }
-      };
 
       if (chart) {
         chart.data.labels = data.labels;
@@ -685,7 +737,7 @@
       }
     }
 
-    // Drag handlers with dynamic max
+    // Drag handlers
     function startDrag(e) {
       e.preventDefault();
       const marker = e.currentTarget;
@@ -768,10 +820,13 @@ Estimated Lost Fee Revenue: ${formatCurrency(lostRevenue)}
 Total Missed Trading Volume: ${formatCurrency(totalMissedVolume, true)}
 Daily Revenue Impact: ${formatCurrency(lostRevenue / state.listingLag, true)}/day
 
-COMPETITIVE BENCHMARKS
+COMPETITIVE BENCHMARKS (${state.tokenName})
 ----------------------
 Exchanges that listed before your Day ${state.listingLag} timeline:
 ${compLines}
+
+All exchange listing dates for ${state.tokenName}:
+${competitors.sort((a, b) => a.day - b.day).map(c => `  - ${c.name}: Day ${c.day}`).join('\n')}
 
 RECOMMENDATION
 --------------
@@ -785,6 +840,15 @@ Documentation: https://0x.org/docs
 ============================================
 Generated by 0x Cost of Inaction Calculator
 Data Sources: CoinGecko, Exchange Announcements`;
+    }
+
+    // Load token-specific competitor data
+    function loadTokenData(tokenName) {
+      const data = tokenData[tokenName];
+      if (data) {
+        // Deep copy to avoid mutating original data
+        competitors = JSON.parse(JSON.stringify(data.competitors));
+      }
     }
 
     // Event Listeners
@@ -801,11 +865,16 @@ Data Sources: CoinGecko, Exchange Announcements`;
         
         if (name === 'Custom') {
           document.getElementById('customToken').classList.add('show');
+          // Load default competitors for custom
+          loadTokenData('Custom');
         } else {
           document.getElementById('customToken').classList.remove('show');
           state.tokenName = name;
           state.dailyVolume = parseInt(volume);
           state.listingLag = parseInt(lag);
+          
+          // Load token-specific competitor data
+          loadTokenData(name);
           
           // Update both sliders
           document.getElementById('volumeSlider').value = volume;
@@ -826,6 +895,7 @@ Data Sources: CoinGecko, Exchange Announcements`;
       document.querySelector('.preset-btn[data-name="Custom"]').classList.add('active');
       document.getElementById('customToken').classList.add('show');
       state.selectedPreset = 'Custom';
+      // Keep current competitors when manually adjusting
       updateUI();
     });
 
@@ -835,6 +905,7 @@ Data Sources: CoinGecko, Exchange Announcements`;
       document.querySelector('.preset-btn[data-name="Custom"]').classList.add('active');
       document.getElementById('customToken').classList.add('show');
       state.selectedPreset = 'Custom';
+      // Keep current competitors when manually adjusting
       updateUI();
     });
 
