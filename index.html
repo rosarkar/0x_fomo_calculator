@@ -56,11 +56,13 @@
     .value-blue { color: #1d4ed8; }
     .value-violet { color: #7c3aed; }
     
-    .presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.375rem; }
-    .preset-btn { padding: 0.5rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 0.125rem; border: 1px solid #d4d4d8; background: #fff; color: #52525b; cursor: pointer; transition: all 0.2s; }
+    .presets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.375rem; }
+    .preset-btn { padding: 0.5rem 0.25rem; border-radius: 0.5rem; font-size: 0.7rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 0.125rem; border: 1px solid #d4d4d8; background: #fff; color: #52525b; cursor: pointer; transition: all 0.2s; }
     .preset-btn:hover { background: #f4f4f5; color: #18181b; }
     .preset-btn.active { background: #09090b; color: #fff; border-color: #09090b; }
     .preset-btn .emoji { font-size: 1rem; }
+    .preset-btn .preset-meta { font-size: 0.5625rem; color: #a1a1aa; margin-top: 0.125rem; white-space: nowrap; }
+    .preset-btn.active .preset-meta { color: #a1a1aa; }
     
     input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: #e4e4e7; border-radius: 4px; cursor: pointer; }
     input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #18181b; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer; }
@@ -167,7 +169,7 @@
     .comp-legend-x { color: #ef4444; font-weight: 700; margin-left: 2px; }
     
     .chart-watermark {
-      font-size: 0.6875rem;
+      font-size: 0.5625rem;
       color: #a1a1aa;
       font-weight: 500;
     }
@@ -202,6 +204,8 @@
       .chart-section { padding: 1.25rem; }
       .chart-container { height: 220px; }
       .cta-section { flex-direction: row; justify-content: space-between; text-align: left; }
+      .preset-btn { font-size: 0.75rem; }
+      .preset-btn .preset-meta { font-size: 0.625rem; }
     }
   </style>
 </head>
@@ -226,10 +230,31 @@
                 Quick Select Token
               </div>
               <div class="presets">
-                <button class="preset-btn" data-name="PEPE" data-volume="500"><span class="emoji">🐸</span><span>PEPE</span></button>
-                <button class="preset-btn active" data-name="PNUT" data-volume="200"><span class="emoji">🥜</span><span>PNUT</span></button>
-                <button class="preset-btn" data-name="GOAT" data-volume="50"><span class="emoji">🐐</span><span>GOAT</span></button>
-                <button class="preset-btn" data-name="Custom" data-volume=""><span class="emoji">✏️</span><span>Custom</span></button>
+                <button class="preset-btn active" data-name="PEPE" data-volume="71" data-lag="18">
+                  <span class="emoji">🐸</span>
+                  <span>PEPE</span>
+                  <span class="preset-meta">18d · $71M/d</span>
+                </button>
+                <button class="preset-btn" data-name="WIF" data-volume="45" data-lag="106">
+                  <span class="emoji">🐶</span>
+                  <span>WIF</span>
+                  <span class="preset-meta">106d · $45M/d</span>
+                </button>
+                <button class="preset-btn" data-name="BONK" data-volume="25" data-lag="355">
+                  <span class="emoji">🐕</span>
+                  <span>BONK</span>
+                  <span class="preset-meta">355d · $25M/d</span>
+                </button>
+                <button class="preset-btn" data-name="POPCAT" data-volume="15" data-lag="428">
+                  <span class="emoji">🙀</span>
+                  <span>POPCAT</span>
+                  <span class="preset-meta">428d · $15M/d</span>
+                </button>
+                <button class="preset-btn" data-name="Custom" data-volume="" data-lag="">
+                  <span class="emoji">✏️</span>
+                  <span>Custom</span>
+                  <span class="preset-meta">Set yours</span>
+                </button>
               </div>
               <input type="text" id="customToken" class="text-input" maxlength="10" placeholder="TOKEN" style="margin-top: 0.5rem;">
             </div>
@@ -240,9 +265,9 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                   Daily Volume
                 </span>
-                <span class="value value-emerald" id="volumeValue">$200M</span>
+                <span class="value value-emerald" id="volumeValue">$71M</span>
               </div>
-              <input type="range" id="volumeSlider" class="slider-emerald" min="1" max="500" value="200">
+              <input type="range" id="volumeSlider" class="slider-emerald" min="1" max="500" value="71">
             </div>
 
             <div class="control-section">
@@ -251,9 +276,9 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                   Your Listing Lag
                 </span>
-                <span class="value value-amber" id="lagValue">30 days</span>
+                <span class="value value-amber" id="lagValue">18 days</span>
               </div>
-              <input type="range" id="lagSlider" class="slider-amber" min="1" max="90" value="30">
+              <input type="range" id="lagSlider" class="slider-amber" min="1" max="500" value="18">
               <div class="comp-markers" id="compMarkers"></div>
               <p class="drag-hint">↔ Drag competitors to adjust their listing speed</p>
             </div>
@@ -264,9 +289,9 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
                   Trading Fee
                 </span>
-                <span class="value value-blue" id="feeValue">0.25%</span>
+                <span class="value value-blue" id="feeValue">0.10%</span>
               </div>
-              <input type="range" id="feeSlider" class="slider-blue" min="10" max="100" value="25">
+              <input type="range" id="feeSlider" class="slider-blue" min="5" max="100" value="10">
             </div>
 
             <div class="control-section">
@@ -292,10 +317,10 @@
                 <div class="result-main">
                   <div class="result-label">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
-                    <span>Revenue Lost on $<span id="tokenDisplay">PNUT</span></span>
+                    <span>Revenue Lost on $<span id="tokenDisplay">PEPE</span></span>
                   </div>
-                  <div class="result-value" id="lostRevenue">$225,000</div>
-                  <p class="result-subtitle" id="subtitle">from $900.0M missed volume over 30 days</p>
+                  <div class="result-value" id="lostRevenue">$191,700</div>
+                  <p class="result-subtitle" id="subtitle">from $1.3B missed volume over 18 days</p>
                 </div>
                 <div class="result-context">
                   <p id="contextText">Every day you delay listing a trending token, competitors capture volume that would otherwise flow through your platform. This calculator models the <strong>fee revenue you forfeit</strong> during your listing lag window. The opportunity cost compounds as early momentum drives the majority of trading activity, often within the first 7-14 days of a token's lifecycle.</p>
@@ -304,15 +329,15 @@
               <div class="stats">
                 <div class="stat">
                   <div class="stat-label">Per Day</div>
-                  <div class="stat-value red" id="perDay">$7.5K</div>
+                  <div class="stat-value red" id="perDay">$10.7K</div>
                 </div>
                 <div class="stat">
                   <div class="stat-label">Volume Missed</div>
-                  <div class="stat-value amber" id="volumeMissed">$900.0M</div>
+                  <div class="stat-value amber" id="volumeMissed">$1.3B</div>
                 </div>
                 <div class="stat green">
                   <div class="stat-label">With 0x</div>
-                  <div class="stat-value green" id="with0x">+$225K</div>
+                  <div class="stat-value green" id="with0x">+$192K</div>
                 </div>
               </div>
             </div>
@@ -330,7 +355,7 @@
               </div>
               <div class="chart-footer">
                 <div class="comp-legend" id="compLegend"></div>
-                <span class="chart-watermark">Powered by 0x</span>
+                <span class="chart-watermark">Powered by 0x • Data: CoinGecko / Exchange Announcements</span>
               </div>
             </div>
           </div>
@@ -356,14 +381,17 @@
   </div>
 
   <script>
-    // State
+    // Constants
+    const SLIDER_MAX = 500;
+    
+    // State - defaults match PEPE
     let state = {
-      dailyVolume: 200,
-      listingLag: 30,
-      tradingFee: 0.25,
+      dailyVolume: 71,
+      listingLag: 18,
+      tradingFee: 0.10,
       captureRate: 15,
-      tokenName: 'PNUT',
-      selectedPreset: 'PNUT'
+      tokenName: 'PEPE',
+      selectedPreset: 'PEPE'
     };
 
     let competitors = [
@@ -394,15 +422,28 @@
       return { lostRevenue, totalMissedVolume };
     }
 
+    // Dynamic chart data generation starting from Day 0
     function generateChartData() {
       const data = { labels: [], market: [], capture: [] };
-      const decay = 0.92;
-      for (let day = 1; day <= 90; day++) {
+      
+      // Dynamic max days based on listing lag
+      const maxDays = Math.max(90, state.listingLag + 30);
+      
+      // Decay rate - slower for longer timeframes
+      const decay = state.listingLag > 100 ? 0.995 : 0.98;
+      
+      // Start from Day 0 (Launch Day)
+      for (let day = 0; day <= maxDays; day++) {
         data.labels.push(day);
-        const market = state.dailyVolume * ((1 - Math.pow(decay, day)) / (1 - decay));
+        
+        // Cumulative market volume
+        const market = day === 0 ? 0 : state.dailyVolume * ((1 - Math.pow(decay, day)) / (1 - decay));
+        
+        // Your capture starts after listing lag
         const capture = day > state.listingLag 
           ? (state.dailyVolume * ((1 - Math.pow(decay, day - state.listingLag)) / (1 - decay))) * (state.captureRate / 100) 
           : 0;
+        
         data.market.push(market);
         data.capture.push(capture);
       }
@@ -424,7 +465,6 @@
       document.getElementById('volumeMissed').textContent = formatCurrency(totalMissedVolume, true);
       document.getElementById('with0x').textContent = `+${formatCurrency(lostRevenue, true)}`;
       
-      // Competitor markers
       updateCompMarkers();
       updateCompLegend();
       updateChart();
@@ -434,7 +474,9 @@
       const container = document.getElementById('compMarkers');
       container.innerHTML = competitors.map((c, idx) => {
         const opacity = state.listingLag > c.day ? 1 : 0.4;
-        return `<div class="comp-marker" data-index="${idx}" style="left: ${(c.day / 90) * 100}%; opacity: ${opacity};">
+        // Use SLIDER_MAX for consistent positioning
+        const position = Math.min((c.day / SLIDER_MAX) * 100, 100);
+        return `<div class="comp-marker" data-index="${idx}" style="left: ${position}%; opacity: ${opacity};">
           <div class="dot" style="background: ${c.color};"></div>
           <span class="name" style="color: ${c.color};">${c.name}</span>
           <span class="day-label">D${c.day}</span>
@@ -450,7 +492,6 @@
 
     function updateCompLegend() {
       const container = document.getElementById('compLegend');
-      // Sort by day for display
       const sortedComps = [...competitors].sort((a, b) => a.day - b.day);
       container.innerHTML = sortedComps.map(c => {
         const late = state.listingLag > c.day;
@@ -464,32 +505,66 @@
 
     function updateChart() {
       const data = generateChartData();
+      const maxDays = Math.max(90, state.listingLag + 30);
       
-      // Build annotations for competitor lines with vertical labels (closer to line)
+      // Build annotations for competitor lines
       const annotations = {};
       competitors.forEach((c, i) => {
-        const late = state.listingLag > c.day;
-        annotations[`comp${i}`] = {
+        // Only show competitors within visible chart range
+        if (c.day <= maxDays) {
+          const late = state.listingLag > c.day;
+          annotations[`comp${i}`] = {
+            type: 'line',
+            xMin: c.day,
+            xMax: c.day,
+            borderColor: c.color,
+            borderWidth: late ? 2 : 1,
+            borderDash: late ? [] : [4, 4]
+          };
+          
+          annotations[`compLabel${i}`] = {
+            type: 'label',
+            xValue: c.day,
+            yValue: 'max',
+            yAdjust: 25,
+            xAdjust: 3,
+            content: [c.name],
+            color: c.color,
+            font: {
+              size: 9,
+              weight: late ? 'bold' : 'normal'
+            },
+            rotation: 270,
+            position: {
+              x: 'start',
+              y: 'start'
+            }
+          };
+        }
+      });
+      
+      // User's listing line
+      if (state.listingLag <= maxDays) {
+        annotations.userLine = {
           type: 'line',
-          xMin: c.day,
-          xMax: c.day,
-          borderColor: c.color,
-          borderWidth: late ? 2 : 1,
-          borderDash: late ? [] : [4, 4]
+          xMin: state.listingLag,
+          xMax: state.listingLag,
+          borderColor: '#dc2626',
+          borderWidth: 2,
+          borderDash: [6, 3]
         };
         
-        // Add vertical label annotation - positioned closer to line
-        annotations[`compLabel${i}`] = {
+        annotations.userLabel = {
           type: 'label',
-          xValue: c.day,
+          xValue: state.listingLag,
           yValue: 'max',
           yAdjust: 25,
           xAdjust: 3,
-          content: [c.name],
-          color: c.color,
+          content: [`You: D${state.listingLag}`],
+          color: '#dc2626',
           font: {
-            size: 9,
-            weight: late ? 'bold' : 'normal'
+            size: 10,
+            weight: 'bold'
           },
           rotation: 270,
           position: {
@@ -497,29 +572,28 @@
             y: 'start'
           }
         };
-      });
-      
-      // User's listing line
-      annotations.userLine = {
+      }
+
+      // Day 0 launch marker
+      annotations.launchLine = {
         type: 'line',
-        xMin: state.listingLag,
-        xMax: state.listingLag,
-        borderColor: '#dc2626',
+        xMin: 0,
+        xMax: 0,
+        borderColor: '#10b981',
         borderWidth: 2,
-        borderDash: [6, 3]
+        borderDash: []
       };
       
-      // User's vertical label - closer to line
-      annotations.userLabel = {
+      annotations.launchLabel = {
         type: 'label',
-        xValue: state.listingLag,
+        xValue: 0,
         yValue: 'max',
         yAdjust: 25,
         xAdjust: 3,
-        content: [`You: D${state.listingLag}`],
-        color: '#dc2626',
+        content: ['Launch'],
+        color: '#10b981',
         font: {
-          size: 10,
+          size: 9,
           weight: 'bold'
         },
         rotation: 270,
@@ -577,6 +651,7 @@
                 borderWidth: 1,
                 padding: 12,
                 callbacks: {
+                  title: ctx => `Day ${ctx[0].label}`,
                   label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.raw * 1e6, true)}`
                 }
               }
@@ -584,7 +659,17 @@
             scales: {
               x: {
                 grid: { color: '#f4f4f5' },
-                ticks: { color: '#71717a', font: { size: 9 } }
+                ticks: { 
+                  color: '#71717a', 
+                  font: { size: 9 },
+                  maxTicksLimit: 10
+                },
+                title: {
+                  display: true,
+                  text: 'Days Since Launch',
+                  color: '#a1a1aa',
+                  font: { size: 10 }
+                }
               },
               y: {
                 grid: { color: '#f4f4f5' },
@@ -600,7 +685,7 @@
       }
     }
 
-    // Drag handlers - independent movement (no sorting)
+    // Drag handlers with dynamic max
     function startDrag(e) {
       e.preventDefault();
       const marker = e.currentTarget;
@@ -635,9 +720,8 @@
       const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
       const relativeX = clientX - dragState.containerLeft;
       const percentage = Math.max(0, Math.min(1, relativeX / dragState.containerWidth));
-      const newDay = Math.max(1, Math.min(90, Math.round(percentage * 90)));
+      const newDay = Math.max(1, Math.min(SLIDER_MAX, Math.round(percentage * SLIDER_MAX)));
       
-      // Update only the dragged competitor - don't sort or affect others
       competitors[dragState.index].day = newDay;
       
       updateUI();
@@ -699,7 +783,8 @@ Contact 0x Enterprise Team: https://0x.org/contact
 Documentation: https://0x.org/docs
 
 ============================================
-Generated by 0x Cost of Inaction Calculator`;
+Generated by 0x Cost of Inaction Calculator
+Data Sources: CoinGecko, Exchange Announcements`;
     }
 
     // Event Listeners
@@ -710,6 +795,7 @@ Generated by 0x Cost of Inaction Calculator`;
         
         const name = btn.dataset.name;
         const volume = btn.dataset.volume;
+        const lag = btn.dataset.lag;
         
         state.selectedPreset = name;
         
@@ -719,7 +805,11 @@ Generated by 0x Cost of Inaction Calculator`;
           document.getElementById('customToken').classList.remove('show');
           state.tokenName = name;
           state.dailyVolume = parseInt(volume);
+          state.listingLag = parseInt(lag);
+          
+          // Update both sliders
           document.getElementById('volumeSlider').value = volume;
+          document.getElementById('lagSlider').value = lag;
         }
         updateUI();
       });
@@ -735,11 +825,16 @@ Generated by 0x Cost of Inaction Calculator`;
       document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('.preset-btn[data-name="Custom"]').classList.add('active');
       document.getElementById('customToken').classList.add('show');
+      state.selectedPreset = 'Custom';
       updateUI();
     });
 
     document.getElementById('lagSlider').addEventListener('input', e => {
       state.listingLag = parseInt(e.target.value);
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.preset-btn[data-name="Custom"]').classList.add('active');
+      document.getElementById('customToken').classList.add('show');
+      state.selectedPreset = 'Custom';
       updateUI();
     });
 
