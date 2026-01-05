@@ -384,7 +384,7 @@
     // Constants
     const SLIDER_MAX = 600;
     
-    // Token-specific data with actual listing dates
+    // Token-specific data with ACTUAL listing dates per token
     const tokenData = {
       PEPE: {
         volume: 71,
@@ -436,7 +436,7 @@
       }
     };
     
-    // State - defaults match PEPE
+    // State
     let state = {
       dailyVolume: 71,
       listingLag: 18,
@@ -446,7 +446,7 @@
       selectedPreset: 'PEPE'
     };
 
-    // Deep copy competitors from token data
+    // Active competitors array - starts with PEPE data
     let competitors = JSON.parse(JSON.stringify(tokenData.PEPE.competitors));
 
     let chart = null;
@@ -470,32 +470,24 @@
       return { lostRevenue, totalMissedVolume };
     }
 
-    // Get dynamic max days for chart based on competitors and listing lag
+    // Get dynamic max days for chart
     function getMaxChartDays() {
       const maxCompDay = Math.max(...competitors.map(c => c.day));
       return Math.max(90, state.listingLag + 30, maxCompDay + 30);
     }
 
-    // Dynamic chart data generation starting from Day 0
+    // Dynamic chart data
     function generateChartData() {
       const data = { labels: [], market: [], capture: [] };
       const maxDays = getMaxChartDays();
-      
-      // Decay rate - slower for longer timeframes
       const decay = maxDays > 200 ? 0.997 : (maxDays > 100 ? 0.995 : 0.98);
       
-      // Start from Day 0 (Launch Day)
       for (let day = 0; day <= maxDays; day++) {
         data.labels.push(day);
-        
-        // Cumulative market volume
         const market = day === 0 ? 0 : state.dailyVolume * ((1 - Math.pow(decay, day)) / (1 - decay));
-        
-        // Your capture starts after listing lag
         const capture = day > state.listingLag 
           ? (state.dailyVolume * ((1 - Math.pow(decay, day - state.listingLag)) / (1 - decay))) * (state.captureRate / 100) 
           : 0;
-        
         data.market.push(market);
         data.capture.push(capture);
       }
@@ -534,7 +526,6 @@
         </div>`;
       }).join('');
       
-      // Attach drag handlers
       container.querySelectorAll('.comp-marker').forEach(marker => {
         marker.addEventListener('mousedown', startDrag);
         marker.addEventListener('touchstart', startDrag, { passive: false });
@@ -558,17 +549,15 @@
       const data = generateChartData();
       const maxDays = getMaxChartDays();
       
-      // Build annotations for competitor lines
       const annotations = {};
       
-      // Day 0 launch marker
+      // Launch marker
       annotations.launchLine = {
         type: 'line',
         xMin: 0,
         xMax: 0,
         borderColor: '#10b981',
-        borderWidth: 2,
-        borderDash: []
+        borderWidth: 2
       };
       
       annotations.launchLabel = {
@@ -579,18 +568,12 @@
         xAdjust: 1,
         content: ['Launch'],
         color: '#10b981',
-        font: {
-          size: 9,
-          weight: 'bold'
-        },
+        font: { size: 9, weight: 'bold' },
         rotation: 270,
-        position: {
-          x: 'start',
-          y: 'start'
-        }
+        position: { x: 'start', y: 'start' }
       };
       
-      // Competitor lines
+      // Competitor lines - dynamically from current competitors array
       competitors.forEach((c, i) => {
         if (c.day <= maxDays) {
           const late = state.listingLag > c.day;
@@ -611,20 +594,14 @@
             xAdjust: 1,
             content: [c.name],
             color: c.color,
-            font: {
-              size: 9,
-              weight: late ? 'bold' : 'normal'
-            },
+            font: { size: 9, weight: late ? 'bold' : 'normal' },
             rotation: 270,
-            position: {
-              x: 'start',
-              y: 'start'
-            }
+            position: { x: 'start', y: 'start' }
           };
         }
       });
       
-      // User's listing line
+      // User's line
       if (state.listingLag <= maxDays) {
         annotations.userLine = {
           type: 'line',
@@ -643,15 +620,9 @@
           xAdjust: 1,
           content: [`You: D${state.listingLag}`],
           color: '#dc2626',
-          font: {
-            size: 10,
-            weight: 'bold'
-          },
+          font: { size: 10, weight: 'bold' },
           rotation: 270,
-          position: {
-            x: 'start',
-            y: 'start'
-          }
+          position: { x: 'start', y: 'start' }
         };
       }
 
@@ -711,25 +682,12 @@
             scales: {
               x: {
                 grid: { color: '#f4f4f5' },
-                ticks: { 
-                  color: '#71717a', 
-                  font: { size: 9 },
-                  maxTicksLimit: 10
-                },
-                title: {
-                  display: true,
-                  text: 'Days Since Launch',
-                  color: '#a1a1aa',
-                  font: { size: 10 }
-                }
+                ticks: { color: '#71717a', font: { size: 9 }, maxTicksLimit: 10 },
+                title: { display: true, text: 'Days Since Launch', color: '#a1a1aa', font: { size: 10 } }
               },
               y: {
                 grid: { color: '#f4f4f5' },
-                ticks: { 
-                  color: '#71717a', 
-                  font: { size: 9 },
-                  callback: v => `$${v}M`
-                }
+                ticks: { color: '#71717a', font: { size: 9 }, callback: v => `$${v}M` }
               }
             }
           }
@@ -744,17 +702,13 @@
       const idx = parseInt(marker.dataset.index);
       const container = document.getElementById('compMarkers');
       const rect = container.getBoundingClientRect();
-      
       const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
       
       dragState = {
         isDragging: true,
         index: idx,
-        startX: clientX,
-        startDay: competitors[idx].day,
         containerLeft: rect.left,
-        containerWidth: rect.width,
-        competitorName: competitors[idx].name
+        containerWidth: rect.width
       };
       
       marker.classList.add('dragging');
@@ -775,16 +729,13 @@
       const newDay = Math.max(1, Math.min(SLIDER_MAX, Math.round(percentage * SLIDER_MAX)));
       
       competitors[dragState.index].day = newDay;
-      
       updateUI();
     }
 
-    function endDrag(e) {
+    function endDrag() {
       if (!dragState.isDragging) return;
-      
       document.querySelectorAll('.comp-marker').forEach(m => m.classList.remove('dragging'));
-      
-      dragState = { isDragging: false, index: null, startX: 0, startDay: 0 };
+      dragState = { isDragging: false, index: null };
       
       document.removeEventListener('mousemove', onDrag);
       document.removeEventListener('mouseup', endDrag);
@@ -826,7 +777,7 @@ Exchanges that listed before your Day ${state.listingLag} timeline:
 ${compLines}
 
 All exchange listing dates for ${state.tokenName}:
-${competitors.sort((a, b) => a.day - b.day).map(c => `  - ${c.name}: Day ${c.day}`).join('\n')}
+${[...competitors].sort((a, b) => a.day - b.day).map(c => `  - ${c.name}: Day ${c.day}`).join('\n')}
 
 RECOMMENDATION
 --------------
@@ -842,18 +793,19 @@ Generated by 0x Cost of Inaction Calculator
 Data Sources: CoinGecko, Exchange Announcements`;
     }
 
-    // Load token-specific competitor data
-    function loadTokenData(tokenName) {
-      const data = tokenData[tokenName];
-      if (data) {
-        // Deep copy to avoid mutating original data
-        competitors = JSON.parse(JSON.stringify(data.competitors));
+    // CRITICAL: Function to load token-specific competitor data
+    function loadTokenCompetitors(tokenName) {
+      if (tokenData[tokenName]) {
+        // Deep copy to prevent mutation
+        competitors = JSON.parse(JSON.stringify(tokenData[tokenName].competitors));
+        console.log(`Loaded competitors for ${tokenName}:`, competitors);
       }
     }
 
     // Event Listeners
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        // Update active state
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
@@ -865,21 +817,30 @@ Data Sources: CoinGecko, Exchange Announcements`;
         
         if (name === 'Custom') {
           document.getElementById('customToken').classList.add('show');
-          // Load default competitors for custom
-          loadTokenData('Custom');
+          // Load default industry average competitors for custom
+          loadTokenCompetitors('Custom');
+          state.tokenName = 'TOKEN';
+          state.dailyVolume = 50;
+          state.listingLag = 30;
+          document.getElementById('volumeSlider').value = 50;
+          document.getElementById('lagSlider').value = 30;
         } else {
           document.getElementById('customToken').classList.remove('show');
+          
+          // Update state with preset values
           state.tokenName = name;
           state.dailyVolume = parseInt(volume);
           state.listingLag = parseInt(lag);
           
-          // Load token-specific competitor data
-          loadTokenData(name);
+          // CRITICAL: Load the token-specific competitor data
+          loadTokenCompetitors(name);
           
-          // Update both sliders
+          // Update slider positions
           document.getElementById('volumeSlider').value = volume;
           document.getElementById('lagSlider').value = lag;
         }
+        
+        // Re-render everything
         updateUI();
       });
     });
@@ -891,21 +852,21 @@ Data Sources: CoinGecko, Exchange Announcements`;
 
     document.getElementById('volumeSlider').addEventListener('input', e => {
       state.dailyVolume = parseInt(e.target.value);
+      // Switch to custom but keep current competitors
       document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('.preset-btn[data-name="Custom"]').classList.add('active');
       document.getElementById('customToken').classList.add('show');
       state.selectedPreset = 'Custom';
-      // Keep current competitors when manually adjusting
       updateUI();
     });
 
     document.getElementById('lagSlider').addEventListener('input', e => {
       state.listingLag = parseInt(e.target.value);
+      // Switch to custom but keep current competitors
       document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('.preset-btn[data-name="Custom"]').classList.add('active');
       document.getElementById('customToken').classList.add('show');
       state.selectedPreset = 'Custom';
-      // Keep current competitors when manually adjusting
       updateUI();
     });
 
@@ -932,7 +893,7 @@ Data Sources: CoinGecko, Exchange Announcements`;
       });
     });
 
-    // Init
+    // Initialize
     updateUI();
   </script>
 </body>
